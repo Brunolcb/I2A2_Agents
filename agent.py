@@ -11,12 +11,13 @@ from preprocessing import unzip
 load_dotenv()
 api_key = os.getenv("API_KEY")
 model = os.getenv("MODEL")
+
 # Carrega os CSVs
 unzip()
 cabecalho_df = pd.read_csv("data/202401_NFs_Cabecalho.csv")
 itens_df = pd.read_csv("data/202401_NFs_Itens.csv")
-cabecalho_df_preview = cabecalho_df.head().to_markdown(index=False)
-itens_df_preview = itens_df.head().to_markdown(index=False)
+cabecalho_df_preview = cabecalho_df.head(2).to_markdown(index=False)
+itens_df_preview = itens_df.head(2).to_markdown(index=False)
 
 # Set up Groq provider and model
 provider = GroqProvider(api_key=api_key)
@@ -25,7 +26,7 @@ model = GroqModel(model, provider=provider)
 @Tool
 def query_data(query: str) -> str:
     """
-    Executes a Python query to answer questions about company data.
+    Executes a Python query to answer questions.
     """
     try:
         # The 'global' scope makes the dataframes available to eval()
@@ -45,13 +46,12 @@ def query_data(query: str) -> str:
 # Create the agent
 agent = Agent(
     model=model,
-    input_model=Pergunta,
-    output_model=Resposta,
-    system_prompt="""
+    system_prompt=f"""
 Você é um assistente de análise de dados especializado em notas fiscais.
 Sua tarefa é responder a perguntas usando DataFrames do pandas.
 
 Você tem acesso a dois DataFrames: 'cabecalho_df' e 'itens_df'.
+
 Para responder à pergunta do usuário, você DEVE seguir estes passos:
 1.  Primeiro, gere o código Python necessário para a ferramenta `query_data` para encontrar a resposta nos DataFrames.
 2.  A ferramenta executará o código e retornará o resultado (por exemplo, um número, uma lista ou uma tabela).
@@ -59,12 +59,12 @@ Para responder à pergunta do usuário, você DEVE seguir estes passos:
 
 Exemplo de consulta: Para encontrar o valor total de todas as notas, o código seria `cabecalho_df['VALOR NOTA FISCAL'].sum()`. Se o resultado for `15000.50`, sua resposta final deve ser algo como: "O valor total de todas as notas fiscais é R$ 15.000,50."
 
-### Visualização dos dados disponíveis:
+### Visualização dos dados disponíveis. Foque nas colunas e nos tipos de dados para interpretar as perguntas e fazer as operações corretamente!
 
-#### 📄 `cabecalho_df` (5 primeiras linhas):
+#### 📄 `cabecalho_df` (Notas fiscais selecionadas aleatoriamente do arquivo de notas fiscais do mês de janeiro/2024, disponibilizado pelo Tribunal de Contas da União):
 {cabecalho_df_preview}
 
-#### 📄 `itens_df` (5 primeiras linhas):
+#### 📄 `itens_df` (Os itens correspondentes das notas fiscais selecionadas):
 {itens_df_preview}
 
 ⚠️ As colunas de data (como 'DATA EMISSÃO') estão no formato:
