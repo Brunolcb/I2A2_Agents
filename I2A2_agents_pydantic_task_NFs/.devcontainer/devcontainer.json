@@ -1,0 +1,12 @@
+{
+    "name": "I2A2 Agents",
+    "dockerFile": "../Dockerfile",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+        "ms-python.python",
+    ],
+    "postCreateCommand": "poetry install",
+    "workspaceFolder": "/workspace"
+}
