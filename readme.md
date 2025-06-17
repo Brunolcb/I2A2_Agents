@@ -6,11 +6,11 @@ First, make sure you have [Visual Studio Code](https://code.visualstudio.com/) i
 
 After installing the extension, open the repository in VS Code and click the blue button at the bottom-left corner.
 
-![Open in Dev Container](dev_containers.png)
+![Open in Dev Container](images/dev_containers.png)
 
 Finally, search for **“Reopen in Container”** or **“Rebuild Container”**.
 
-![Reopen Container](dev_containers_2.png)
+![Reopen Container](images/dev_containers_2.png)
 
 ---
 
@@ -36,4 +36,4 @@ poetry run python main.py
 
 You should see answers like the one below:
 
-![Example Output](example.png)
+![Example Output](images/example.png)
